@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+
 
 
 
@@ -46,7 +47,11 @@ const SignInForm= () => {
   return (
   
          <div className=' h-120  w-lg mx-auto bg-linear-to-b from-cyan-50 to-cyan-200 rounded-2xl'>
+         <Link to='/' >
+            <button className=' mx-10 mt-5 bg-neutral-700 px-4 py-2 rounded-md text-white cursor-pointer transition duration-300 hover:bg-neutral-900'>Back</button></Link>
+        
         <form onSubmit={handleSubmit} autoComplete='off'>
+
             <div className=''>
                 <h1 className=' text-slate-500   text-4xl font-SemiBold tracking-tight  mt-10 px-10'>SignIn To New Account</h1>
                 <p className='  text-lg tracking-wide px-10 py-2'>Already have an account? <a className='text-blue-600' href="/Login">LogIn</a> to your Account</p>
