@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+
 
 
 const SignInForm= () => {
+  const navigate=useNavigate();
   const User={
     name:'',
     email:'',
@@ -29,6 +32,7 @@ const SignInForm= () => {
         
         toast.success(res.data.message)
         console.log(res.data.message)
+        navigate('/home')
 
     })
     .catch((err)=>{
@@ -61,7 +65,7 @@ const SignInForm= () => {
         <option value="admin">Admin</option>
         <option value="player">Player</option>
       </select>
-            <button className=' mx-10 mt-5 bg-blue-500 px-4 py-2 rounded-md text-white cursor-pointer transition duration-300 hover:bg-blue-600'>Login</button>
+            <button className=' mx-10 mt-5 bg-blue-500 px-4 py-2 rounded-md text-white cursor-pointer transition duration-300 hover:bg-blue-600'>Register</button>
 
             </div>
             
