@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import { connectDB } from "./utils/db.js";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.routes.js";
+import predictionRoutes from "./routes/Prediction.routes.js";
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(cors({
 app.use(cookieParser( ))
 app.use(urlencoded({extended:true}));
 app.use("/api/v1/auth",authRoutes)
+app.use("/api/v1/prediction",predictionRoutes)
 
 app.listen(PORT,()=>console.log(`Server running on port ${PORT}`));
 
