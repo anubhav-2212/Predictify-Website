@@ -47,7 +47,7 @@ const predictionSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ["UPCOMING", "LIVE", "CLOSED","SETTLED"],
-      default: "LIVE"
+      
     },
 
     createdBy: {

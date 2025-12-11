@@ -55,7 +55,7 @@ export const getPrediction=async(req,res)=>{
     const now=new Date();
     let filter={}
 
-    if (status=="active"){
+    if (status=="live"){
         filter={
             startTime:{$lte:now},
             endTime:{$gte:now},
@@ -67,7 +67,7 @@ export const getPrediction=async(req,res)=>{
             startTime:{$gte:now}
         }
     }
-    else if(status=="Closed"){
+    else if(status=="closed"){
         filter={
             endTime:{$lte:now}
         }
@@ -83,17 +83,42 @@ export const getPrediction=async(req,res)=>{
         }
 
     }
-    const prediction=await Prediction.find(filter).sort({startTime:1})
-    if(!prediction){
-        return res.status(400).json({
-            success:false,
-            message:"Prediction not found"})
-    }
+    
+    //Prediction.find never returns null it returns empty array
+    // if(!prediction){
+    //     return res.status(400).json({
+    //         success:false,
+    //         message:"Prediction not found"})
+    // }
+    const predictions = await Prediction.find(filter).sort({ startTime: 1 });
+
+    
+
+    if (predictions.length === 0) {
+    return res.status(404).json({
+        success: false,
+        message: "No predictions found"
+    });
+}
+  const responseWithStatus=predictions.map(p=>{
+    let statusValue="upcomimg"
+    if(p.result!= null) statusValue="settled"
+    else if(p.startTime>now) statusValue="upcoming"
+    else if(p.startTime<=now && now<=p.endTime) statusValue="live"
+    else if(p.endTime<now) statusValue="closed"
+
+    return{
+        ...p.toObject(),
+        status:statusValue
+    };
+
+  })
+
     res.status(200).json({
         success:true,
         message:"Prediction found successfully",
-        count:prediction.length,
-        data:prediction
+        count:predictions.length,
+        data:responseWithStatus
     })
     
 
