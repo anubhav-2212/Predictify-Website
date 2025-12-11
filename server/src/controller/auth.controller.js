@@ -30,7 +30,7 @@ export const register=async(req,res)=>{
                 success:false,
                 message:"User not created"})
         }
-         const token=jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:"1d"})
+         const token=jwt.sign({id:user._id,email:user.email,role:user.role},process.env.JWT_SECRET,{expiresIn:"1d"})
         res.cookie("token",token,{httpOnly:true,secure:true,sameSite:"none"})
         res.status(201).json({
             success:true,
@@ -52,7 +52,7 @@ export const register=async(req,res)=>{
 export const login=async(req,res)=>{
 
     const {email,password}=req.body
-    console.log(email,password)
+    // console.log(email,password)
     if(!email || !password){
         return res.status(400).json({
             success:false,
@@ -72,11 +72,12 @@ export const login=async(req,res)=>{
                 success:false,
                 message:"Invalid credentials"})
         }
-        const token=jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:"1d"})
-        res.cookie("token",token,{httpOnly:true,secure:true,sameSite:"none"})
+        const token=jwt.sign({id:user._id,email:user.email,role:user.role},process.env.JWT_SECRET,{expiresIn:"1d"})
+        res.cookie("token",token,{httpOnly:false,secure:false,sameSite:"none"})
         res.status(200).json({
             success:true,
-            message:"User logged in successfully"})
+            message:"User logged in successfully",
+            user:user.role})
     } catch (error) {
         console.log(error)
         res.status(500).json({success:false,

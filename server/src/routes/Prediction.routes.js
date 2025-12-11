@@ -1,7 +1,10 @@
 import express from "express";
-import { createPrediction } from "../controller/Prediction.controller";
+import { createPrediction } from "../controller/Prediction.controller.js";
+import userMiddleware from '../middlewares/auth.middlewares.js';
+import { isAdmin } from '../middlewares/admin.middlewares.js';
 const predictionRoutes = express.Router();
 
-predictionRoutes.post("/createPredction",createPrediction)
+predictionRoutes.post("/create",userMiddleware, isAdmin,createPrediction)
+
 
 export default predictionRoutes

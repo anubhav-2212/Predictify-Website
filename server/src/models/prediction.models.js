@@ -53,10 +53,10 @@ const predictionSchema = new mongoose.Schema(
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true
+      // required: true
     }
   },
   { timestamps: true }
 );
-
-export default mongoose.model("Prediction", predictionSchema);
+const Prediction= mongoose.model("Prediction", predictionSchema);
+export default Prediction
