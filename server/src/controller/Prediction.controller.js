@@ -53,7 +53,7 @@ export const createPrediction=async(req,res)=>{
 export const getPrediction=async(req,res)=>{
     const{status}=req.query;
     const now=new Date();
-    const filter={}
+    let filter={}
 
     if (status=="active"){
         filter={
