@@ -123,5 +123,35 @@ export const getPrediction=async(req,res)=>{
     
 
 }
-export const getPredictionById=async(req,res)=>{}
+export const getPredictionById=async(req,res)=>{
+    const{id}=req.params
+    console.log(id)
+    const now=new Date();
+
+    const prediction=await Prediction.findById(id)
+    if(!prediction){
+        return res.status(400).json({
+            success:false,
+            message:"Invalid Id"
+        })
+    }
+    let statusValue="Upcoming"
+    if (prediction.result!=null) statusValue="settled"
+    if (prediction.startTime>now) statusValue="upcoming"
+    if(prediction.startTime<= now && prediction.endTime>= now) statusValue="live"
+    if(prediction.endTime<now) statusValue="closed"
+
+    
+
+    res.status(200).json({
+        success:true,
+        message:"got Prediction by id ",
+        count:prediction.length,
+        data:{...prediction.toObject(),
+            status:statusValue
+        }
+
+
+    })
+}
 export const setPredictionResult=async(req,res)=>{}
