@@ -24,7 +24,7 @@ export const createPrediction=async(req,res)=>{
             endTime,
             createdBy:req.user._id  
         })
-        if(!Prediction){
+        if(!prediction){
             return res.status(400).json({
                 success:false,
                 message:"Prediction not created"})
@@ -137,9 +137,9 @@ export const getPredictionById=async(req,res)=>{
     }
     let statusValue="Upcoming"
     if (prediction.result!=null) statusValue="settled"
-    if (prediction.startTime>now) statusValue="upcoming"
-    if(prediction.startTime<= now && prediction.endTime>= now) statusValue="live"
-    if(prediction.endTime<now) statusValue="closed"
+    else if (prediction.startTime>now) statusValue="upcoming"
+    else if(prediction.startTime<= now && prediction.endTime>= now) statusValue="live"
+    else if(prediction.endTime<now) statusValue="closed"
 
     
 
@@ -152,6 +152,20 @@ export const getPredictionById=async(req,res)=>{
         }
 
 
+    })
+}
+export const deletePrediction=async(req,res)=>{
+    const{id}=req.params
+    const prediction=await Prediction.findByIdAndDelete(id)
+    if(!prediction){
+        return res.status(400).json({
+            success:false,
+            message:"Invalid Id"
+        })
+    }
+    res.status(200).json({
+        success:true,
+        message:"Prediction deleted successfully"
     })
 }
 export const setPredictionResult=async(req,res)=>{}
