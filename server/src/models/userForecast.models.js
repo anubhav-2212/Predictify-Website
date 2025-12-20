@@ -6,12 +6,12 @@ const userForecastSchema=new mongoose.Schema({
         ref:"User",
         required:true
     },
-    predictionId:{
+    forecastId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Prediction",
         required:true
     },
-    stakeAmount:{
+    forecastAmount:{
         type:Number,
         required:true
     },
