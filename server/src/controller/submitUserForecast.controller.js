@@ -4,7 +4,7 @@ import Wallet from "../models/wallet.models.js";
 import userForecast from "../models/userForecast.models.js";
 
 
-const submitForecast=async(req,res)=>{
+export const submitForecast=async(req,res)=>{
     try {
         const userId=req.user.id
         const{forecastId}=req.params
