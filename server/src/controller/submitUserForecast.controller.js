@@ -17,6 +17,23 @@ export const submitForecast=async(req,res)=>{
                 message:"All fields are required"
             })
         }
+        //validation on forecast amount type 
+        if(
+            typeof forecastAmount!=="number" ||
+            forecastAmount<=0
+        ){
+            return res.status(400).json({
+                success:false,
+                message:"forecast amount must be a number"
+            })
+        }
+        //validation on choice enum
+        if(!['yes','no'].includes(choice)){
+            return res.status(400).json({
+                success:false,
+                message:"Choice should be either yes or no"
+            })
+        }
 
         //check whether the forecast/prediction exist or not
         const forecast=await Prediction.findById(forecastId)
@@ -42,8 +59,22 @@ export const submitForecast=async(req,res)=>{
                 message:"Forecast is not live"
             })
         }
+        //check if the result is pending aur not
+        if(forecast.result!=="pending"){
+            return res.status(400).json({
+                success:false,
+                message:"Result is not declared"
+            })
+        }
         wallet.balance-=forecastAmount
         await wallet.save()
+        const existingForecast=await userForecast.findOne({userId,forecastId})
+        if(existingForecast){
+            return res.status(400).json({
+                success:false,
+                message:"Forecast already done"
+            })
+        }
 
         const submittedForecast=await userForecast.create({
             userId,

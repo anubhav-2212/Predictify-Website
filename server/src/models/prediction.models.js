@@ -40,16 +40,16 @@ const predictionSchema = new mongoose.Schema(
 
     result: {
       type: String,
-      enum: ["yes", "no", null],
-      default: null
+      enum: ["yes", "no", "pending"],
+      default:"pending"
     },
 
-    status: {
-      type: String,
-      enum: ["UPCOMING", "LIVE", "CLOSED","SETTLED"],
+    // status: {
+    //   type: String,
+    //   enum: ["UPCOMING", "LIVE", "CLOSED","SETTLED"],
       
-    },
-
+    // },
+    //We wont store this status here because storing status in database is not a good idea it should be calculated on time basis
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
