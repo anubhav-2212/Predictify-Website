@@ -1,7 +1,7 @@
 import userForecast from "../models/userForecast.models.js";
 import Prediction from "../models/prediction.models.js";
 import Wallet from "../models/wallet.models.js";
-import userForecast from "../models/userForecast.models.js";
+
 
 
 export const submitForecast=async(req,res)=>{
@@ -45,7 +45,7 @@ export const submitForecast=async(req,res)=>{
         wallet.balance-=forecastAmount
         await wallet.save()
 
-        const userForecast=await userForecast.create({
+        const submittedForecast=await userForecast.create({
             userId,
             forecastId,
             choice,
@@ -60,9 +60,10 @@ export const submitForecast=async(req,res)=>{
             forecast.totalNoStake+=forecastAmount
             forecast.noVotes+=1
         }
+        await forecast.save()
         res.status(200).json({
-            success:false,
-            forecast:userForecast,
+            success:true,
+            forecast:submittedForecast,
             message:"Forecast Submitted successfully"
         })
 

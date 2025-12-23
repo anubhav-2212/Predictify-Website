@@ -32,7 +32,7 @@ export const register=async(req,res)=>{
                 message:"User not created"})
         }
         //its better to create wallet when user Signs up
-        await Wallet.create({userId:user._id,balance:0,transactions:[]})
+        await Wallet.create({userId:user._id,balance:1000,transactions:[]})
          const token=jwt.sign({id:user._id,email:user.email,role:user.role},process.env.JWT_SECRET,{expiresIn:"1d"})
         res.cookie("token",token,{httpOnly:true,secure:true,sameSite:"none"})
         res.status(201).json({
