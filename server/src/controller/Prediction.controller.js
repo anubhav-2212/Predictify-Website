@@ -1,5 +1,8 @@
 import Prediction from "../models/prediction.models.js";
 import User from "../models/auth.models.js";
+import userForecast from "../models/userForecast.models.js";
+import Wallet from "../models/wallet.models.js";
+
 
 export const createPrediction=async(req,res)=>{
     const{question,category,startTime,endTime}=req.body
@@ -44,7 +47,8 @@ export const createPrediction=async(req,res)=>{
         
     } catch (error) {
         console.log(error)
-        res.status(500).json({success:false,
+        res.status(500).json({
+            success:false,
             message:"Something went wrong"})
         
     }
@@ -168,4 +172,83 @@ export const deletePrediction=async(req,res)=>{
         message:"Prediction deleted successfully"
     })
 }
-export const setPredictionResult=async(req,res)=>{}
+export const setPredictionResult=async(req,res)=>{
+    const{forecastId}=req.params
+    const{result}=req.body
+    try {
+        if(!forecastId){
+            return res.status(400).json({
+                success:false,
+                message:"Invalid Id"
+            })
+        }
+        if(!['yes','no'].includes(result)){
+            return res.status(400).json({
+                success:false,
+                message:"result not recieved"
+            })
+        }
+        const forecast=await Prediction.findById({forecastId})
+        if(!forecast){
+            return res.status(400).json({
+                success:false,
+                message:"Forecast not found"
+            })
+        }
+        if(forecast.result!=="pending"){
+            return res.status(400).json({
+                success:false,
+                message:"Result Already Declared"
+            })
+        }
+        forecast.result=result
+        await forecast.save();
+
+        const userForecasts=await userForecast.find({forecastId})
+        if(!userForecast){
+            return res.status(400).json({
+                success:false,
+                message:"No users Predicted"
+            })
+        }
+        for(const uf of userForecasts){
+            if(uf.choice === result){
+                uf.result="won"
+                uf.rewardAmount=uf.forecastAmount*2
+                const wallet=await Wallet.findOne({userId:uf.userId})
+                if(wallet){
+                    wallet.balance+=uf.rewardAmount
+                    await wallet.save();
+                }
+                
+            }
+            else{
+                    uf.result='lost'
+                    uf.rewardAmount=0
+
+                }
+            await uf.save();
+
+            }
+            res.status(200).json({
+                success:true,
+                message:"Forecast Settled Successfully"
+            })
+
+        }
+
+
+        
+    catch (error) {
+        console.log(error)
+        res.status(500).json({
+            success:false,
+            message:"Something went wrong"
+        })
+
+        
+    }
+
+    
+
+}
