@@ -18,15 +18,16 @@ export const submitForecast=async(req,res)=>{
             })
         }
         //validation on forecast amount type 
-        if(
-            typeof forecastAmount!=="number" ||
-            forecastAmount<=0
-        ){
-            return res.status(400).json({
+        const amount=Number(forecastAmount)
+        if(Number.isFinite(amount)||amount<0){
+             return res.status(400).json({
                 success:false,
-                message:"forecast amount must be a number"
+                message:"forecast amount must be greater than"
             })
         }
+
+
+       
         //validation on choice enum
         if(!['yes','no'].includes(choice)){
             return res.status(400).json({
@@ -45,7 +46,7 @@ export const submitForecast=async(req,res)=>{
         }
         //find the user wallet
         const wallet=await Wallet.findOne({userId})
-        if(!wallet || wallet.balance<forecastAmount){
+        if(!wallet || wallet.balance<amount){
             return res.status(400).json({
                 success:false,
                 message:'Insufficient wallet funds'
@@ -59,36 +60,37 @@ export const submitForecast=async(req,res)=>{
                 message:"Forecast is not live"
             })
         }
-        //check if the result is pending aur not
-        if(forecast.result!=="pending"){
-            return res.status(400).json({
-                success:false,
-                message:"Result is not declared"
-            })
-        }
-        wallet.balance-=forecastAmount
-        await wallet.save()
-        const existingForecast=await userForecast.findOne({userId,forecastId})
+          const existingForecast=await userForecast.findOne({userId,forecastId})
         if(existingForecast){
             return res.status(400).json({
                 success:false,
                 message:"Forecast already done"
             })
         }
+        //check if the result is pending aur not
+        if(forecast.result!==null){
+            return res.status(400).json({
+                success:false,
+                message:"Result is already declared"
+            })
+        }
+        wallet.balance-=amount
+        await wallet.save()
+      
 
         const submittedForecast=await userForecast.create({
             userId,
             forecastId,
             choice,
-            forecastAmount,
+            amount,
 
         })
         if(choice=='yes'){
-            forecast.totalYesStake+=forecastAmount
+            forecast.totalYesStake+=amount
             forecast.yesVotes+=1
         }
         else if(choice=='no'){
-            forecast.totalNoStake+=forecastAmount
+            forecast.totalNoStake+=amount
             forecast.noVotes+=1
         }
         await forecast.save()

@@ -195,7 +195,7 @@ export const setPredictionResult=async(req,res)=>{
                 message:"Forecast not found"
             })
         }
-        if(forecast.result!=="pending"){
+        if(forecast.result!==null){
             return res.status(400).json({
                 success:false,
                 message:"Result Already Declared"
