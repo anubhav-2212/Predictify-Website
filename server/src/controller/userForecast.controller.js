@@ -111,3 +111,27 @@ export const submitForecast=async(req,res)=>{
         
     }
 }
+export const getForecastHistory=async(req,res)=>{
+    const{userId}=req.user.id
+    try {
+        const history=await userForecast.find({userId})
+        . populate('forecastId',"question category startTime endTime result")
+        .sort({createdAt:-1})
+
+        return res.status(200).json({
+            success:true,
+            count:history.length,
+            data:history
+        })
+       
+        
+        
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            success:false,
+            message:"Internal Server Error"
+        })
+        
+    }
+}
