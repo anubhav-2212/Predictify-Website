@@ -27,8 +27,8 @@ const userForecastSchema=new mongoose.Schema({
     },
     result:{
         type:String,
-        enum:["pending",'won',"lost"],
-        default:"pending"
+        enum:['won',"lost",null],
+        default:null
     }
 
 },{timestamps:true})
